@@ -2,6 +2,12 @@
 
 查看 V2EX 当前热榜帖子。
 
+## 安装
+
+```bash
+skills add yungyu16/skills/v2ex-hot
+```
+
 ## 使用方式
 
 安装后在 Claude Code 对话中直接用自然语言描述需求，agent 会自动调用。

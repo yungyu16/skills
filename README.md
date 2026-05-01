@@ -33,11 +33,12 @@
 技能通过 `skills` CLI 工具安装：
 
 ```bash
-# 从本地路径安装
-npx skills install /path/to/yungyu-skills/jina-web
-
 # 从 GitHub 安装
-npx skills install <owner>/<repo>
+skills add yungyu16/skills/jina-web
+skills add yungyu16/skills/v2ex-hot
+
+# 从本地路径安装
+skills add /path/to/yungyu-skills/jina-web
 ```
 
-详见各技能目录内的 `SKILL.md`。
+仓库地址：<https://github.com/yungyu16/skills>

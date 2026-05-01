@@ -4,6 +4,12 @@
 
 一个轻量级 Claude Code 自定义 Skill，通过 Jina AI OpenAPI 实现网页内容读取和网络搜索功能。**可作为 Claude Code 内置 WebFetch 和 WebSearch 工具的高效替代方案**，零第三方依赖，支持并发操作。
 
+## 安装
+
+```bash
+skills add yungyu16/skills/jina-web
+```
+
 ## 使用方式
 
 安装后，**在 Claude Code 对话中直接用自然语言描述需求**，agent 会自动调用。
