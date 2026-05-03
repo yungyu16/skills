@@ -14,7 +14,7 @@ description: >
 
 1. 当脚本报错 `NO_API_KEY` 时，引导用户前往 [Jina API Dashboard](https://jina.ai/api-dashboard/) 注册并获取 API Key（格式 `jina_xxx`）
 2. 让用户在聊天中提供他们的 token
-3. 使用用户的 token 运行 `node scripts/auth.mjs set <token>`
+3. 使用用户的 token 运行 `node scripts/auth.js set <token>`
 4. 验证通过后 token 持久化到 `~/.config/jina-api/key`，后续所有脚本自动读取
 
 ### 认证错误处理
@@ -25,8 +25,8 @@ description: >
 
 | 能力       | 脚本                   | API          | 说明                         |
 |----------|----------------------|--------------|----------------------------|
-| 读取网页/PDF | `scripts/read.mjs`   | r.jina.ai    | 单个或多个 URL 并发读取，输出 Markdown |
-| 搜索网络     | `scripts/search.mjs` | svip.jina.ai | 单个或多个关键词并发搜索，支持时间/地域过滤     |
+| 读取网页/PDF | `scripts/read.js`   | r.jina.ai    | 单个或多个 URL 并发读取，输出 Markdown |
+| 搜索网络     | `scripts/search.js` | svip.jina.ai | 单个或多个关键词并发搜索，支持时间/地域过滤     |
 
 两个脚本都内置并发支持：
 
@@ -39,20 +39,20 @@ description: >
 
 ```bash
 # 搜索
-node scripts/search.mjs "Python 最新动态"
+node scripts/search.js "Python 最新动态"
 
 # 读取搜索结果中的 URL
-node scripts/read.mjs https://url1.com https://url2.com
+node scripts/read.js https://url1.com https://url2.com
 ```
 
 ### 并发批处理
 
 ```bash
 # 多个 URL 并发读取
-node scripts/read.mjs https://url1.com https://url2.com https://url3.com
+node scripts/read.js https://url1.com https://url2.com https://url3.com
 
 # 多个关键词并发搜索
-node scripts/search.mjs "Kubernetes" "Docker" "微服务"
+node scripts/search.js "Kubernetes" "Docker" "微服务"
 ```
 
 ## 详细说明

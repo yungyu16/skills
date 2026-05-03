@@ -7,6 +7,8 @@
 
 var childProcess = require('child_process');
 
+var CURL_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
 // 简易 HTML 实体解码
 function htmlUnescape(str) {
   return str
@@ -24,7 +26,7 @@ function htmlUnescape(str) {
     .replace(/&nbsp;/g, '\u00a0');
 }
 
-function trim(s) {
+function decodeHtml(s) {
   return s ? htmlUnescape(s.trim()) : '';
 }
 
@@ -33,15 +35,13 @@ function fetchHotTopics() {
 
   var html;
   try {
-    html = childProcess.execSync(
-      'curl -s --connect-timeout 10 --max-time 15 ' +
-        '-A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ' +
-        'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" ' +
-        '"' + url + '"',
-      { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 }
-    );
+    html = childProcess.execFileSync('curl', [
+      '-s', '--connect-timeout', '10', '--max-time', '15',
+      '-A', CURL_UA,
+      url
+    ], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
   } catch (e) {
-    html = (e.stdout || '');
+    html = (typeof e.stdout === 'string' ? e.stdout : '');
   }
 
   if (!html || html.indexOf('id="Tabs"') < 0) {
@@ -53,9 +53,37 @@ function fetchHotTopics() {
   // 只解析主内容区（id="Tabs" 之后的话题列表）
   var afterTabs = html.slice(html.indexOf('id="Tabs"'));
 
-  // 每个话题是一个 <table>...</table>，包含 topic-link
-  var tableRegex = /<table[^>]*>[\s\S]*?<\/table>/g;
-  var tables = afterTabs.match(tableRegex) || [];
+  // 每个话题是一个顶层 <table>，包含 topic-link
+  // 用栈匹配顶层 table，避免嵌套 </table> 提前截断
+  var tables = [];
+  var searchFrom = afterTabs.indexOf('<table');
+  while (searchFrom !== -1) {
+    var depth = 0;
+    var i = searchFrom;
+    var found = false;
+    while (i < afterTabs.length) {
+      if (afterTabs.slice(i, i + 6).toLowerCase() === '<table') {
+        // 确认第7个字符是 >、空格、tab、换行或 /，排除 <table-custom> 等自定义标签
+        var next = afterTabs[i + 6];
+        if (next === '>' || next === ' ' || next === '/' || next === '\t' || next === '\n' || next === '\r') {
+          depth++;
+        }
+        i += 6;
+      } else if (afterTabs.slice(i, i + 8).toLowerCase() === '</table>') {
+        if (depth > 0) depth--;
+        i += 8;
+        if (depth === 0) {
+          tables.push(afterTabs.slice(searchFrom, i));
+          searchFrom = afterTabs.indexOf('<table', i);
+          found = true;
+          break;
+        }
+      } else {
+        i++;
+      }
+    }
+    if (!found) break;
+  }
 
   var topics = [];
   for (var t = 0; t < tables.length; t++) {
@@ -76,17 +104,18 @@ function fetchHotTopics() {
     // 作者
     var authorMatch = table.match(/<strong><a href="\/member\/[^"]*">([^<]+)<\/a><\/strong>/);
 
-    // 时间
-    var timeMatch = table.match(/<span title="[^"]*">([^<]+)<\/span>/);
+    // 时间（title 属性值中含日期格式）
+    // 时间（定位含日期格式的 title 属性，取 span 文本内容作为相对时间）
+    var timeMatch = table.match(/<span title="\d{4}-\d{2}-\d{2}[^"]*">([^<]+)<\/span>/);
 
     // 回复数
     var replyMatch = table.match(/#reply(\d+)/);
 
     topics.push({
-      title: trim(titleMatch[1]),
-      node: trim(nodeMatch ? nodeMatch[1] : ''),
-      author: trim(authorMatch ? authorMatch[1] : ''),
-      time: trim(timeMatch ? timeMatch[1] : ''),
+      title: decodeHtml(titleMatch[1]),
+      node: decodeHtml(nodeMatch ? nodeMatch[1] : ''),
+      author: decodeHtml(authorMatch ? authorMatch[1] : ''),
+      time: decodeHtml(timeMatch ? timeMatch[1] : ''),
       replies: replyMatch ? replyMatch[1] : '0',
       url: topicUrl
     });
@@ -100,7 +129,7 @@ function fetchHotTopics() {
 
   var total = topics.length;
   console.log('V2EX 热榜（当前 ' + total + ' 条）');
-  console.log('='.repeat(60));
+  console.log();
 
   var maxShow = Math.min(total, 20);
   for (var i = 0; i < maxShow; i++) {

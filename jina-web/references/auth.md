@@ -17,20 +17,20 @@ Jina API 通过 `Authorization: Bearer` 头进行认证。
 
 ## 配置流程
 
-Token 通过 `auth.mjs` 脚本验证并持久化到 `~/.config/jina-api/key`。
+Token 通过 `auth.js` 脚本验证并持久化到 `~/.config/jina-api/key`。
 
 ```bash
-node scripts/auth.mjs set jina_xxx
+node scripts/auth.js set jina_xxx
 ```
 
-查看状态：`node scripts/auth.mjs status`
-清除凭据：`node scripts/auth.mjs clear`
+查看状态：`node scripts/auth.js status`
+清除凭据：`node scripts/auth.js clear`
 
 ## 认证状态码
 
 | 状态码 | 含义 | 处理 |
 |---|---|---|
-| `NO_API_KEY` | 未配置任何凭据 | 引导用户提供 token，运行 `node scripts/auth.mjs set <token>` |
-| HTTP 401 | Token 无效或过期 | 引导用户重新获取 token 并运行 `auth.mjs set` |
+| `NO_API_KEY` | 未配置任何凭据 | 引导用户提供 token，运行 `node scripts/auth.js set <token>` |
+| HTTP 401 | Token 无效或过期 | 引导用户重新获取 token 并运行 `auth.js set` |
 | HTTP 402 | Token 配额用完 | 引导用户前往 https://jina.ai 续费或创建新 Key |
 | HTTP 429 | 触发限流 | 建议等待重试或升级套餐 |

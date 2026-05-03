@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## SKILL 说明
 @SKILL-DESIGN.md
 
@@ -27,13 +25,14 @@ skill-name/
 - SKILL.md 正文只放核心流程，详细参数放到 references/（渐进式加载）
 - 脚本内部的帮助文本/错误消息中的路径要与 SKILL.md 中的用法一致
 - 输出不要使用 emoji
+- **所有辅助脚本统一使用 Node.js**，不引入 Python 或其他运行时
 
 ## 技能列表
 
 | 目录 | 能力 | 技术栈 |
 |------|------|--------|
 | `jina-web/` | 网页/PDF 读取 + 网络搜索（Jina AI OpenAPI） | Node.js (ESM) |
-| `v2ex-hot/` | V2EX 热榜抓取展示 | Node.js (CJS) / Python |
+| `v2ex-hot/` | V2EX 热榜抓取展示 | Node.js (CJS) |
 
 ## 常用命令
 
@@ -45,8 +44,8 @@ npx skills list
 npx skills install ./<skill-name>
 
 # 验证单 skill
-node scripts/read.mjs <url>
-node scripts/search.mjs <keyword>
+node scripts/read.js <url>
+node scripts/search.js <keyword>
 node scripts/format_hot.js
 ```
 

@@ -5,26 +5,26 @@
 ## 脚本
 
 ```
-scripts/read.mjs
+scripts/read.js
 ```
 
 ## 用法
 
 ```bash
 # 读取单个 URL
-node scripts/read.mjs https://example.com
+node scripts/read.js https://example.com
 
 # 同时读取多个（自动并发，顺序与输入一致）
-node scripts/read.mjs https://a.com https://b.com https://c.com
+node scripts/read.js https://a.com https://b.com https://c.com
 
 # 提取页面链接
-node scripts/read.mjs --with-links https://example.com
+node scripts/read.js --with-links https://example.com
 
 # 提取页面图片
-node scripts/read.mjs --with-images https://example.com
+node scripts/read.js --with-images https://example.com
 
 # 保存到文件
-node scripts/read.mjs -o output.json https://example.com
+node scripts/read.js -o output.json https://example.com
 ```
 
 ## 参数
@@ -34,6 +34,7 @@ node scripts/read.mjs -o output.json https://example.com
 | `urls` | URL 列表（必填，支持多个，自动并发） |
 | `--with-links` | 提取页面所有链接 |
 | `--with-images` | 提取页面图片 |
+| `--max-workers` | 并发数，默认 5 |
 | `--output, -o` | 输出到 JSON 文件 |
 
 ## 输出格式
@@ -86,6 +87,6 @@ export JINA_API_KEY=jina_xxx
 
 ## 最佳实践
 
-- 搜索后读取：先用 `search.mjs` 找到相关 URL，再用本脚本读取具体内容
+- 搜索后读取：先用 `search.js` 找到相关 URL，再用本脚本读取具体内容
 - 多个 URL 直接传给同一个命令，无需多次调用
 - PDF 链接也支持直接读取
