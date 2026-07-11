@@ -2,7 +2,7 @@
 
 ## 项目概述
 
-Claude Code 自定义技能集合。每个技能(skill)是一个独立目录，包含 SKILL.md（给 AI 看的指令）和辅助脚本。所有辅助脚本统一使用 Node.js，不引入 Python 或其他运行时。
+Agent Skills 集合。每个技能（skill）是一个独立目录，必须包含 `SKILL.md`，可按需包含辅助脚本、参考资料、静态资源和客户端元数据。仓库内辅助脚本统一使用 Node.js，不引入 Python 或其他运行时。
 
 ## 技能列表
 
@@ -10,11 +10,8 @@ Claude Code 自定义技能集合。每个技能(skill)是一个独立目录，�
 |-----------------|-----------------------------------|---------------|
 | `jina-web/`     | 网页/PDF 读取 + 网络搜索（Jina AI OpenAPI） | Node.js (CJS) |
 | `v2ex-hot/`     | V2EX 热榜抓取展示                       | Node.js (CJS) |
-| `daily-report/` | 基于 git 提交自动生成日报                   | Node.js (CJS) |
-| `agent-notes/`  | 对话中认知增量记录为学习日志                    | Node.js (CJS) |
 | `svg-to-png/`   | SVG 转 PNG（sharp-cli）              | npx sharp-cli |
 | `explore-repo/` | 从问题背景到源码实现的渐进式导读与连续追问          | 无             |
-| `write-blog/`   | 羊羽个人博客写作风格指南                     | 无             |
 
 ## 常用命令
 
@@ -22,23 +19,20 @@ Claude Code 自定义技能集合。每个技能(skill)是一个独立目录，�
 # 验证 skill 安装
 npx skills list
 
-# 从 GitHub 安装 skill（仓库地址见 git remote -v）
-npx skills add yungyu16/skills/<skill-name>
+# 从 GitHub 安装单个 skill
+npx skills add yungyu16/skills@<skill-name>
 
-# 验证单 skill（在 skill 目录内执行）
+# 运行仓库内辅助脚本（在对应 skill 目录内执行）
 node scripts/read.js <url>
 node scripts/search.js <keyword>
 node scripts/format_hot.js
 ```
 
-## skills-lock.json
-
-管理依赖的外部技能（如 `skill-creator`）。`source` 和 `computedHash` 用于锁定版本，不要手动修改。
-
 ### 核心约定
 
-- **新增 skill 时，必须同步更新以下两处**：`CLAUDE.md` 技能列表、`README.md` 技能列表。缺一不可
-- **`name` frontmatter 字段必须与父目录名一致**，小写字母+连字符
+- **新增、删除或重命名 skill 时，必须同步更新以下两处**：`AGENTS.md` 技能列表、`README.md` 技能列表及安装命令
+- **`AGENTS.md` 是 AI 指引的唯一事实源**；`CLAUDE.md` 必须保持为指向 `AGENTS.md` 的软链接，不维护独立内容
+- **`name` frontmatter 字段必须与父目录名一致**，仅使用小写字母、数字和连字符，不能以连字符开头或结尾，也不能包含连续连字符
 - **所有文件引用使用相对路径**，从 skill 根目录开始
 - **SKILL.md 正文只放核心流程**，详细参数放到 references/（渐进式加载）
 - **脚本帮助文本/错误消息中的路径要与 SKILL.md 中的用法一致**
@@ -60,6 +54,7 @@ node scripts/format_hot.js
 ```
 skill-name/
 ├── SKILL.md          # 必需：元数据 + 指令（< 500 行）
+├── agents/           # 可选：特定客户端的展示与调用元数据
 ├── README.md         # 可选：面向用户的说明
 ├── scripts/          # 可选：可执行脚本
 ├── references/       # 可选：按需读取的文档
@@ -73,7 +68,7 @@ skill-name/
 
 | 字段              | 必需 | 说明                             |
 |-----------------|----|--------------------------------|
-| `name`          | 是  | 小写字母+连字符，1-64 字符，**必须与父目录名一致** |
+| `name`          | 是  | 小写字母、数字和连字符，1-64 字符，**必须与父目录名一致** |
 | `description`   | 是  | 1-1024 字符，描述功能+触发场景            |
 | `license`       | 否  | 许可证名或引用许可证文件                   |
 | `compatibility` | 否  | 环境要求（如 "Requires Node.js 18+"） |
@@ -117,7 +112,7 @@ $SKILL_DIR/scripts/read.mjs # 变量不存在
 | 层级  | 内容                   | 大小限制       |
 |-----|----------------------|------------|
 | 元数据 | name + description   | ~100 token |
-| 指令  | SKILL.md 正文          | < 500 行    |
+| 指令  | SKILL.md 正文          | 建议 < 5000 token，且 < 500 行 |
 | 资源  | references/、scripts/ | 按需加载       |
 
 - 正文只放核心流程，详细参数放到 references/
@@ -149,7 +144,7 @@ node scripts/auth.mjs set <token>
 ### 评审检查清单
 
 - [ ] `name` 是否与目录名一致
-- [ ] `name` 格式：小写字母 + 连字符
+- [ ] `name` 格式：小写字母、数字和连字符，无首尾或连续连字符
 - [ ] description 是否包含触发关键词
 - [ ] description 是否含实现细节（删掉）
 - [ ] SKILL.md 是否 < 500 行
