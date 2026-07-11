@@ -1,0 +1,4 @@
+interface:
+  display_name: "渐进式探索代码库"
+  short_description: "从问题背景到源码实现，渐进讲解陌生项目并支持连续追问"
+  default_prompt: "使用 $explore-codebase 帮我从高层背景开始，渐进理解这个开源项目及其源码。"
