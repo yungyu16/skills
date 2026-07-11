@@ -10,6 +10,7 @@ Claude Code 自定义技能集合，基于 [agentskills.io](https://agentskills.
 | [v2ex-hot](v2ex-hot/) | V2EX 热榜查看 | 无 |
 | [daily-report](daily-report/) | 基于 git 提交的日报生成 | 无 |
 | [agent-notes](agent-notes/) | 认知增量学习日志 | 无 |
+| [source-code-guide](source-code-guide/) | 从问题背景到源码实现的渐进式导读，支持连续追问 | 无 |
 | [write-blog](write-blog/) | 羊羽个人博客写作风格指南 | 无 |
 
 ## 安装
@@ -21,6 +22,7 @@ skills add yungyu16/skills/jina-web
 skills add yungyu16/skills/v2ex-hot
 skills add yungyu16/skills/daily-report
 skills add yungyu16/skills/agent-notes
+skills add yungyu16/skills/source-code-guide
 skills add yungyu16/skills/write-blog
 ```
 
