@@ -13,7 +13,7 @@ Claude Code 自定义技能集合。每个技能(skill)是一个独立目录，�
 | `daily-report/` | 基于 git 提交自动生成日报                   | Node.js (CJS) |
 | `agent-notes/`  | 对话中认知增量记录为学习日志                    | Node.js (CJS) |
 | `svg-to-png/`   | SVG 转 PNG（sharp-cli）              | npx sharp-cli |
-| `explore-codebase/` | 从问题背景到源码实现的渐进式导读与连续追问          | 无             |
+| `explore-repo/` | 从问题背景到源码实现的渐进式导读与连续追问          | 无             |
 | `write-blog/`   | 羊羽个人博客写作风格指南                     | 无             |
 
 ## 常用命令
